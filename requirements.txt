@@ -9,4 +9,5 @@ colorama>=0.4.6
 urllib3>=1.26.16
 protobuf>=4.21.12
 pytz
+telebot
 protobuf-decoder>=0.3.0
