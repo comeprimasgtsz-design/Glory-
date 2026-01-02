@@ -1,5 +1,4 @@
 Flask
-pycryptodome
 requests
 PyJWT
 rich
