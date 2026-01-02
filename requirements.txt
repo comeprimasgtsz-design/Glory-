@@ -3,3 +3,5 @@ pycryptodome
 requests
 protobuf
 PyJWT
+rich
+aiohttp
