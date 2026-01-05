@@ -981,28 +981,42 @@ def run_async_loop(loop):
     loop.run_forever()
 
 
+import asyncio
+
+TOKEN_EXPIRY = 7 * 60 * 60  # 7 horas
+
+# CONTAS DIRETO NO CÓDIGO
+CONTAS = {
+    "4380298164": "34B6152EBACE1FC865A325AE3E4AE828AD6E52C1935FEA0E90883E527E4D4331",
+    "4380314160": "2CFD885EAB5F7AD9FB15221016AA991377161EC88E2CF8AF222F430220ED617D",
+    "4380323428": "0EA29CD69D5C76C734A982F4BB230B345D5503C46F5E261FEE0765FDD1881A26",
+    "4380334389": "F4F7185F7922731357D8DE30C8B1CBF28E0CFB8D43C1EC7FD665E4378EAD72C8"
+}
+
 async def start_bot(uid, password):
     try:
         await asyncio.wait_for(main(uid, password), timeout=TOKEN_EXPIRY)
     except asyncio.TimeoutError:
-        print("Token expired after 7 hours. Restarting...")
+        print(f"[{uid}] Token expirou. Reiniciando...")
     except Exception as e:
-        print(f" Error: {e}. Restarting...")
+        print(f"[{uid}] Erro: {e}. Reiniciando...")
 
 async def run_forever(uid, password):
     while True:
         await start_bot(uid, password)
 
-def run_bot():
-    asyncio.run(run_forever(
-        "4380298164",
-        "34B6152EBACE1FC865A325AE3E4AE828AD6E52C1935FEA0E90883E527E4D4331"
-    ))
+async def main_runner():
+    tasks = []
 
-if __name__ == '__main__':
-    import threading
-    bot_thread = threading.Thread(target=run_bot)
-    bot_thread.daemon = True
-    bot_thread.start()
-    bot.infinity_polling()
-    app.run(host='Loacal', port=port)
+    for uid, password in CONTAS.items():
+        tasks.append(
+            asyncio.create_task(run_forever(uid, password))
+        )
+
+        # delay opcional entre logins (recomendado)
+        await asyncio.sleep(2)
+
+    await asyncio.gather(*tasks)
+
+if __name__ == "__main__":
+    asyncio.run(main_runner())
